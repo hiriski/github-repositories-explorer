@@ -30,12 +30,12 @@ const typography: TypographyVariantsOptions = {
   },
   h5: {
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: 700,
     fontFamily,
   },
   h6: {
-    fontSize: 16,
-    fontWeight: 600,
+    fontSize: 17,
+    fontWeight: 700,
     fontFamily,
   },
   body1: {
@@ -46,7 +46,7 @@ const typography: TypographyVariantsOptions = {
   },
   subtitle1: {
     fontSize: '0.875rem',
-    fontWeight: 400,
+    fontWeight: 500,
   },
   subtitle2: {
     fontSize: '0.82rem',
