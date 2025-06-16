@@ -18,7 +18,7 @@ const onResponseError = (axiosError: AxiosError) => {
 
 // create axios instance
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.BASE_API_URL,
+  baseURL: import.meta.env.VITE_BASE_API_URL,
   timeout: 20000,
 })
 

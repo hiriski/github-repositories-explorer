@@ -1,4 +1,4 @@
-import { FC, memo, useState } from 'react'
+import { FC, memo, useCallback, useState } from 'react'
 
 // components
 import Avatar from '@mui/material/Avatar'
@@ -10,6 +10,12 @@ import Typography from '@mui/material/Typography'
 import GithubRepositoryItem from './github-repository-item'
 import RepositoryIcon from '@/assets/icons/iconoir--repository.svg'
 
+// apis
+import { GitHubApi } from '@/services/github.api'
+
+// hooks
+import { useGithub } from '@/hooks'
+
 interface Props {
   user: IGithubUser
   isLastItem: boolean
@@ -17,10 +23,24 @@ interface Props {
 
 const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
   const [expanded, setExpanded] = useState(false)
-  const [repositories, setRepositories] = useState<IGithubRepository[]>([])
+  const { repositories, setRepositories } = useGithub()
+
+  const onClickUser = useCallback(async () => {
+    setExpanded(!expanded)
+    if (!expanded) {
+      const repos = await GitHubApi.fetchRepositories({
+        username: user.login,
+        per_page: 2,
+        page: 1,
+      })
+      setRepositories({ ...repositories, [user.login]: repos })
+    }
+  }, [repositories])
+
   return (
     <Stack direction='column'>
       <Stack
+        onClick={onClickUser}
         direction='row'
         sx={{
           cursor: 'pointer',
@@ -56,13 +76,13 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
       {expanded && (
         <Stack
           sx={{
-            pl: 2,
+            pl: 2.4,
             gap: 1.4,
             pb: 2,
             borderBottom: theme => `1px solid ${theme.palette.divider}`,
           }}
         >
-          {repositories.map(item => (
+          {repositories?.[user.login]?.map(item => (
             <GithubRepositoryItem key={String(item.id)} repository={item} />
           ))}
         </Stack>

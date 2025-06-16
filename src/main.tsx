@@ -23,14 +23,17 @@ import MuiThemeProvider from './plugins/@mui/components/@mui-theme.provider.tsx'
 
 // component wrapper
 import App from './App.tsx'
+import GithubContextProvider from './components/github-context-provider.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppContextProvider>
-      <MuiThemeProvider>
-        <CssBaseline enableColorScheme />
-        <App />
-      </MuiThemeProvider>
+      <GithubContextProvider>
+        <MuiThemeProvider>
+          <CssBaseline enableColorScheme />
+          <App />
+        </MuiThemeProvider>
+      </GithubContextProvider>
     </AppContextProvider>
   </StrictMode>
 )

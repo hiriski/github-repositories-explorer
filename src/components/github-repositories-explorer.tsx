@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 
 // components
 import Box from '@mui/material/Box'
@@ -10,13 +10,31 @@ import CardContent from '@mui/material/CardContent'
 import SearchBar from './searcbar'
 import GithubUserItem from './github-user-item'
 
-const GithubRepositoriesExplorer = () => {
-  const [isLoading, setIsLoading] = useState(false)
-  const [users, setUsers] = useState<IGithubUser[]>([])
+// hooks
+import { useGithub } from '@/hooks'
 
-  const onSearch = useCallback((value: string) => {
-    console.log('VALUE', value)
-  }, [])
+// apis
+import { GitHubApi } from '@/services/github.api'
+
+const GithubRepositoriesExplorer = () => {
+  const { usersLoading, setUsersLoading, users, setUsers } = useGithub()
+
+  const onSearch = useCallback(
+    async (value: string) => {
+      if (value) {
+        try {
+          setUsersLoading(true)
+          const users = await GitHubApi.fetchSearchUsers(value)
+          setUsers(users)
+        } catch (e) {
+          console.log('e', e)
+        } finally {
+          setUsersLoading(false)
+        }
+      }
+    },
+    [usersLoading]
+  )
 
   return (
     <Card
@@ -37,7 +55,7 @@ const GithubRepositoriesExplorer = () => {
         }}
       >
         <SearchBar onSearch={onSearch} />
-        {!isLoading && users?.length === 0 ? (
+        {!usersLoading && users?.length === 0 ? (
           <Box
             sx={{
               minHeight: 160,

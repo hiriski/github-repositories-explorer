@@ -1,12 +1,4 @@
-import {
-  FC,
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  ChangeEvent,
-  KeyboardEvent,
-} from 'react'
+import { FC, useState, useCallback, ChangeEvent, KeyboardEvent } from 'react'
 
 // lodash
 import debounce from 'lodash/debounce'
@@ -26,46 +18,34 @@ interface Props {
 const SearchBar: FC<Props> = ({ onSearch }) => {
   const [query, setQuery] = useState('')
 
-  // Debounced search function
-  const debouncedSearch = useMemo(
-    () =>
-      debounce(value => {
-        if (onSearch) {
-          onSearch(value)
-        }
-      }, 750),
-    [onSearch]
-  )
-
-  const handleInputChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setQuery(event.target.value)
-    },
+  const debounceChangeHandler = useCallback(
+    debounce((value: string) => {
+      onSearch(value)
+    }, 750),
     []
   )
+
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setQuery(value)
+    debounceChangeHandler(value)
+  }
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        debouncedSearch.cancel() // cancel pending debounce
         if (onSearch) onSearch(query)
       }
     },
-    [debouncedSearch, onSearch, query]
+    [onSearch, query]
   )
-
-  // Call debounced search when query changes
-  useEffect(() => {
-    debouncedSearch(query)
-    return debouncedSearch.cancel // cleanup
-  }, [query, debouncedSearch])
 
   return (
     <TextField
       variant='outlined'
       placeholder='Search...'
       value={query}
-      onChange={handleInputChange}
+      onChange={onChange}
       onKeyDown={handleKeyDown}
       fullWidth
       sx={{

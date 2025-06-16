@@ -1,4 +1,16 @@
 declare global {
+  interface GithubContextType {
+    users: IGithubUser[]
+    setUsers: (users: IGithubUser[]) => void
+    repositories: { [key: string]: IGithubRepository[] }
+    setRepositories: (repositories: {
+      [key: string]: IGithubRepository[]
+    }) => void
+    usersLoading: boolean
+    setUsersLoading: (loading: boolean) => void
+    repositoriesLoading: boolean
+    setRepositoriesLoading: (loading: boolean) => void
+  }
   interface IGithubUser {
     login: string
     name: string
