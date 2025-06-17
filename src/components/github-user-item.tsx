@@ -10,12 +10,13 @@ import GithubRepositoryItemSkeleton from './github-repositort-item-skeleton'
 
 // icons
 import LinkIcon from '@/assets/icons/tabler--link.svg'
+import ArrowUpIcon from '@/assets/icons/akar-icons--arrow-up.svg'
 
 // apis
 import { GitHubApi, IRequestFetchRepositories } from '@/services/github.api'
 
 // hooks
-import { Button } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import { useGithub } from '@/hooks'
 
 // motion
@@ -120,13 +121,27 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
     }
   }, [repositories, totalCount, expandedItem, user.login])
 
+  const onClickLink = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    window.open(user.html_url, '_blank')
+  }, [])
+
   return (
     <Stack
       direction='column'
       component={motion.div}
       sx={{
+        position: 'relative',
         cursor: 'pointer',
         overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        '&:hover': {
+          '.btn-user-link': {
+            right: 0,
+            opacity: 1,
+          },
+        },
       }}
       variants={motionCardVariants}
       initial='collapsed'
@@ -186,7 +201,7 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
             {expandedItem === user.login && (
               <Stack
                 sx={{
-                  maxHeight: 400,
+                  maxHeight: 350,
                   overflowY: 'scroll',
                   pl: 2.4,
                   gap: 1.4,
@@ -255,6 +270,31 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <IconButton
+        className='btn-user-link'
+        color='primary'
+        sx={{
+          position: 'absolute',
+          userSelect: 'none',
+          top: 20,
+          right: -60,
+          width: 40,
+          height: 40,
+          opacity: 0,
+          transition: theme =>
+            theme.transitions.create(['right', 'transform'], {
+              duration: theme.transitions.duration.complex,
+            }),
+        }}
+        onClick={onClickLink}
+      >
+        <Box
+          component='img'
+          src={ArrowUpIcon}
+          sx={{ height: 20, width: 'auto', transform: 'rotate(45deg)' }}
+        />
+      </IconButton>
     </Stack>
   )
 }
