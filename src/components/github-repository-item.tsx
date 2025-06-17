@@ -33,7 +33,15 @@ const GithubRepositoryItem: FC<Props> = ({ repository }) => {
           direction='row'
           sx={{ alignItems: 'center', justifyContent: 'space-between' }}
         >
-          <Typography sx={{ fontWeight: '700', fontSize: '1.05rem' }}>
+          <Typography
+            sx={{
+              fontWeight: '700',
+              fontSize: {
+                xs: '0.9rem',
+                sm: '1rem',
+              },
+            }}
+          >
             {repository.name}
           </Typography>
           {repository?.stargazers_count > 0 && (
@@ -55,7 +63,15 @@ const GithubRepositoryItem: FC<Props> = ({ repository }) => {
         <Typography
           variant='subtitle2'
           component='p'
-          sx={{ color: 'text.secondary', lineHeight: 1.3, mb: 0.4 }}
+          sx={{
+            color: 'text.secondary',
+            lineHeight: 1.3,
+            mb: 0.4,
+            fontSize: {
+              xs: '0.8rem',
+              sm: '0.9rem',
+            },
+          }}
         >
           {repository.description}
         </Typography>

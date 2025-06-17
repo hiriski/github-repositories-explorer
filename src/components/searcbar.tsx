@@ -51,7 +51,7 @@ const SearchBar: FC<Props> = ({ onSearch }) => {
     <Stack direction='column' gap={2}>
       <TextField
         variant='outlined'
-        placeholder='Search...'
+        placeholder='Search someone...'
         value={query}
         onChange={onChange}
         onKeyDown={handleKeyDown}
@@ -59,7 +59,10 @@ const SearchBar: FC<Props> = ({ onSearch }) => {
         sx={{
           '& .MuiOutlinedInput-root': {
             borderRadius: 4,
-            fontSize: '1.1rem',
+            fontSize: {
+              xs: '0.9rem',
+              sm: '1.1rem',
+            },
             fontWeight: '600',
           },
         }}
