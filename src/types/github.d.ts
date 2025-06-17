@@ -8,8 +8,8 @@ declare global {
     }) => void
     usersLoading: boolean
     setUsersLoading: (loading: boolean) => void
-    repositoriesLoading: boolean
-    setRepositoriesLoading: (loading: boolean) => void
+    expandedItem: string | null
+    setExpandedItem: (item: string | null) => void
   }
   interface IGithubUser {
     login: string

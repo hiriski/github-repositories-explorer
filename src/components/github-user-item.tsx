@@ -16,6 +16,7 @@ import { GitHubApi, IRequestFetchRepositories } from '@/services/github.api'
 
 // hooks
 import { Button } from '@mui/material'
+import { useGithub } from '@/hooks'
 
 interface Props {
   user: IGithubUser
@@ -23,10 +24,12 @@ interface Props {
 }
 
 const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
-  const [expanded, setExpanded] = useState(false)
   const [totalCount, setTotalCount] = useState(0)
   const [repositories, setRepositories] = useState<IGithubRepository[]>([])
   const [repositoryIsLoading, setRepositoryIsLoading] = useState(false)
+
+  // github context state
+  const { expandedItem, setExpandedItem } = useGithub()
 
   const [params, setParams] = useState({
     userId: user.id,
@@ -64,31 +67,29 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
     [repositoryIsLoading, repositories, totalCount, params.page]
   )
 
-  const onClickUser = useCallback(
-    async (isExpanded: boolean) => {
-      setExpanded(!isExpanded)
-      if (!isExpanded) {
-        fetchRepositories(params)
-      } else {
-        // reset state
-        setRepositories([])
-        setTotalCount(0)
-      }
-    },
-    [repositories, totalCount]
-  )
+  const onClickUser = useCallback(async () => {
+    console.log('user.login : expandedItem', user.login, expandedItem)
+    setExpandedItem(user.login)
+    if (user.login !== expandedItem) {
+      fetchRepositories(params)
+    } else {
+      // reset state
+      // setRepositories([])
+      // setTotalCount(0)
+    }
+  }, [repositories, totalCount, expandedItem, user.login])
 
   return (
     <Stack direction='column'>
       <Stack
-        onClick={() => onClickUser(expanded)}
+        onClick={onClickUser}
         direction='row'
         sx={{
           cursor: 'pointer',
           alignItems: 'center',
           py: 2,
           ...(!isLastItem &&
-            !expanded &&
+            user.login !== expandedItem &&
             repositories.length === 0 && {
               borderBottom: theme => `1px solid ${theme.palette.divider}`,
             }),
@@ -115,7 +116,7 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
           </Stack>
         </Stack>
       </Stack>
-      {expanded && (
+      {expandedItem === user.login && (
         <Stack
           sx={{
             maxHeight: 400,

@@ -9,7 +9,7 @@ export const GithubContextProvider: FC<{ children: ReactNode }> = ({
     [key: string]: IGithubRepository[]
   }>({})
   const [usersLoading, setUsersLoading] = useState(false)
-  const [repositoriesLoading, setRepositoriesLoading] = useState(false)
+  const [expandedItem, setExpandedItem] = useState<string | null>(null)
 
   return (
     <GithubContext.Provider
@@ -20,8 +20,8 @@ export const GithubContextProvider: FC<{ children: ReactNode }> = ({
         setRepositories,
         usersLoading,
         setUsersLoading,
-        repositoriesLoading,
-        setRepositoriesLoading,
+        expandedItem,
+        setExpandedItem,
       }}
     >
       {children}
