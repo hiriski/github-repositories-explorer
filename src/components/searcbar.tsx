@@ -19,10 +19,12 @@ interface Props {
 
 const SearchBar: FC<Props> = ({ onSearch }) => {
   const [query, setQuery] = useState('')
+  const [queryResult, setQueryResult] = useState('')
 
   const debounceChangeHandler = useCallback(
     debounce((value: string) => {
       onSearch(value)
+      setQueryResult(value)
     }, 750),
     []
   )
@@ -36,7 +38,10 @@ const SearchBar: FC<Props> = ({ onSearch }) => {
   const handleKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
       if (event.key === 'Enter') {
-        if (onSearch) onSearch(query)
+        if (onSearch) {
+          onSearch(query)
+          setQueryResult(query)
+        }
       }
     },
     [onSearch, query]
@@ -77,7 +82,7 @@ const SearchBar: FC<Props> = ({ onSearch }) => {
             component='span'
             sx={{ fontWeight: '700', color: 'text.primary' }}
           >
-            {query}
+            {queryResult}
           </Typography>
         </Typography>
       )}
