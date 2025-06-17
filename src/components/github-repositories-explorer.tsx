@@ -33,9 +33,11 @@ const GithubRepositoriesExplorer = () => {
         } finally {
           setUsersLoading(false)
         }
+      } else {
+        setUsers([])
       }
     },
-    [usersLoading]
+    [usersLoading, users, setUsers]
   )
 
   return (
