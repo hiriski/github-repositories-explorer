@@ -4,6 +4,7 @@ import Container from '@mui/material/Container'
 
 import Header from './components/header'
 import GithubRepositoriesExplorer from './components/github-repositories-explorer'
+import Footer from './components/footer'
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Container maxWidth='sm'>
         <Header />
         <GithubRepositoriesExplorer />
+        <Footer />
       </Container>
     </Box>
   )

@@ -163,21 +163,41 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
               }),
           }}
         >
-          <Avatar src={user.avatar_url} sx={{ width: 48, height: 48, mr: 3 }} />
+          <Avatar
+            src={user.avatar_url}
+            sx={{
+              width: { xs: 40, sm: 48 },
+              height: { xs: 40, sm: 48 },
+              mr: {
+                xs: 1,
+                sm: 3,
+              },
+            }}
+          />
           <Stack>
-            <Typography variant='h6' sx={{ fontWeight: '700' }}>
+            <Typography
+              variant='h6'
+              sx={{
+                fontWeight: '700',
+                fontSize: { xs: '1rem', sm: '1.1rem' },
+              }}
+            >
               {user.name ?? user.login}
             </Typography>
             <Stack direction='row' gap={1}>
               <Box
                 component='img'
                 src={LinkIcon}
-                sx={{ width: 18, height: 'auto', mt: 0.2 }}
+                sx={{ width: { xs: 15, sm: 18 }, height: 'auto', mt: 0.2 }}
               />
               <Typography
                 variant='subtitle1'
                 component='p'
-                sx={{ color: 'text.secondary', fontWeight: '600' }}
+                sx={{
+                  color: 'text.secondary',
+                  fontWeight: '600',
+                  fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                }}
               >
                 {user.html_url}
               </Typography>
@@ -204,7 +224,10 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
                   maxHeight: 350,
                   overflowY: 'scroll',
                   pl: 2.4,
-                  gap: 1.4,
+                  gap: {
+                    xs: 1,
+                    md: 1.4,
+                  },
                   pb: 2,
                   borderBottom: theme => `1px solid ${theme.palette.divider}`,
                 }}
