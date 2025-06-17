@@ -44,7 +44,7 @@ const GithubRepositoriesExplorer = () => {
         mx: 'auto',
         width: {
           xs: '100%',
-          sm: 520,
+          sm: 600,
         },
         boxShadow: 2,
         borderRadius: 6.5,

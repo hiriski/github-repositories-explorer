@@ -20,6 +20,7 @@ const GithubRepositoryItem: FC<Props> = ({ repository }) => {
         borderRadius: 3,
         py: 1,
         px: 1.4,
+        mb: 1,
       }}
     >
       <Stack gap={0.2}>

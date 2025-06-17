@@ -1,6 +1,7 @@
 import octokit from '@/plugins/octokit'
 
 export interface IRequestFetchRepositories {
+  userId: number
   username: string
   /** @description Limit results to repositories of the specified type. */
   type?: 'all' | 'owner' | 'member'
@@ -10,6 +11,11 @@ export interface IRequestFetchRepositories {
   direction?: 'asc' | 'desc'
   page: number
   per_page: number
+}
+
+export interface IResponseFetchRepositories {
+  repositories: IGithubRepository[]
+  totalCount: number
 }
 
 export const GitHubApi = {
@@ -27,15 +33,32 @@ export const GitHubApi = {
     }
   },
 
+  fetchUserData: async (account_id: number): Promise<number> => {
+    try {
+      const { data } = await octokit.request('GET /user/{account_id}', {
+        account_id: account_id,
+      })
+      return data.public_repos
+    } catch (error) {
+      console.error('Error fetching user:', error)
+      return 0
+    }
+  },
+
   fetchRepositories: async (
     params: IRequestFetchRepositories
-  ): Promise<IGithubRepository[]> => {
+  ): Promise<IResponseFetchRepositories> => {
     try {
+      const publicReposCount = await GitHubApi.fetchUserData(params.userId)
       const { data } = await octokit.request('GET /users/{username}/repos', {
         username: params.username,
         per_page: params.per_page,
+        page: params.page,
       })
-      return data as unknown as IGithubRepository[]
+      return {
+        repositories: data as unknown as IGithubRepository[],
+        totalCount: publicReposCount,
+      }
     } catch (error) {
       return Promise.reject(error)
     }
