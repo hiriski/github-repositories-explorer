@@ -1,4 +1,4 @@
-import { FC, memo } from 'react'
+import { FC, memo, useCallback } from 'react'
 
 // components
 import Box from '@mui/material/Box'
@@ -13,6 +13,10 @@ interface Props {
 }
 
 const GithubRepositoryItem: FC<Props> = ({ repository }) => {
+  const onClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    window.open(repository.html_url, '_blank')
+  }, [])
   return (
     <Stack
       sx={{
@@ -22,6 +26,7 @@ const GithubRepositoryItem: FC<Props> = ({ repository }) => {
         px: 1.4,
         mb: 1,
       }}
+      onClick={onClick}
     >
       <Stack gap={0.2}>
         <Stack
