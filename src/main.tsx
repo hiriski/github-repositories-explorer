@@ -25,6 +25,9 @@ import MuiThemeProvider from './plugins/@mui/components/@mui-theme.provider.tsx'
 import App from './App.tsx'
 import GithubContextProvider from './components/github-context-provider.tsx'
 
+// global css
+import './scrollbar.css'
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppContextProvider>
