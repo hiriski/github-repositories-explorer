@@ -1,6 +1,6 @@
 import { Box, Skeleton, Stack } from '@mui/material'
 
-const UserProfileSkeleton = () => {
+const GithubUserItemSkeleton = () => {
   return (
     <Box
       display='flex'
@@ -20,4 +20,4 @@ const UserProfileSkeleton = () => {
   )
 }
 
-export default UserProfileSkeleton
+export default GithubUserItemSkeleton

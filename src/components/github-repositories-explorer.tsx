@@ -15,6 +15,7 @@ import { useGithub } from '@/hooks'
 
 // apis
 import { GitHubApi } from '@/services/github.api'
+import GithubUserItemSkeleton from './github-user-item-skeleton'
 
 const GithubRepositoriesExplorer = () => {
   const { usersLoading, setUsersLoading, users, setUsers } = useGithub()
@@ -24,6 +25,7 @@ const GithubRepositoriesExplorer = () => {
       if (value) {
         try {
           setUsersLoading(true)
+          setUsers([])
           const users = await GitHubApi.fetchSearchUsers(value)
           setUsers(users)
         } catch (e) {
@@ -81,13 +83,17 @@ const GithubRepositoriesExplorer = () => {
           </Box>
         ) : (
           <Stack sx={{ mt: 1 }}>
-            {users.map((user, index) => (
-              <GithubUserItem
-                key={user.login}
-                user={user as IGithubUser}
-                isLastItem={users?.length - 1 === index}
-              />
-            ))}
+            {usersLoading
+              ? Array.from({ length: 5 }).map((_, index) => (
+                  <GithubUserItemSkeleton key={index} />
+                ))
+              : users.map((user, index) => (
+                  <GithubUserItem
+                    key={user.login}
+                    user={user as IGithubUser}
+                    isLastItem={users?.length - 1 === index}
+                  />
+                ))}
           </Stack>
         )}
       </CardContent>

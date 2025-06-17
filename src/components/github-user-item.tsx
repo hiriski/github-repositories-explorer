@@ -5,9 +5,10 @@ import Avatar from '@mui/material/Avatar'
 import Stack from '@mui/material/Stack'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import GithubRepositoryItemSkeleton from './github-repositort-item-skeleton'
+import GithubRepositoryItem from './github-repository-item'
 
 // icons
-import GithubRepositoryItem from './github-repository-item'
 import RepositoryIcon from '@/assets/icons/iconoir--repository.svg'
 
 // apis
@@ -47,7 +48,8 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
           alignItems: 'center',
           py: 2,
           ...(!isLastItem &&
-            !expanded && {
+            !expanded &&
+            repositories?.[user.login]?.length === 0 && {
               borderBottom: theme => `1px solid ${theme.palette.divider}`,
             }),
         }}
