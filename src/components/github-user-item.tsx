@@ -1,4 +1,4 @@
-import { FC, memo, useCallback, useMemo, useState } from 'react'
+import { FC, Fragment, memo, useCallback, useMemo, useState } from 'react'
 
 // components
 import Box from '@mui/material/Box'
@@ -18,9 +18,49 @@ import { GitHubApi, IRequestFetchRepositories } from '@/services/github.api'
 import { Button } from '@mui/material'
 import { useGithub } from '@/hooks'
 
+// motion
+import { motion, AnimatePresence, Variants } from 'framer-motion'
+
 interface Props {
   user: IGithubUser
   isLastItem: boolean
+}
+
+const motionCardVariants: Variants = {
+  collapsed: {
+    height: 80,
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 30,
+    },
+  },
+  expanded: {
+    height: 'auto',
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 30,
+    },
+  },
+}
+
+const motionContentVariants: Variants = {
+  collapsed: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      duration: 0.2,
+    },
+  },
+  expanded: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.1,
+      duration: 0.3,
+    },
+  },
 }
 
 const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
@@ -73,6 +113,7 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
     if (user.login !== expandedItem) {
       fetchRepositories(params)
     } else {
+      setExpandedItem(null)
       // reset state
       // setRepositories([])
       // setTotalCount(0)
@@ -80,107 +121,140 @@ const GithubUserItem: FC<Props> = ({ user, isLastItem }) => {
   }, [repositories, totalCount, expandedItem, user.login])
 
   return (
-    <Stack direction='column'>
-      <Stack
-        onClick={onClickUser}
-        direction='row'
-        sx={{
-          cursor: 'pointer',
-          alignItems: 'center',
-          py: 2,
-          ...(!isLastItem &&
-            user.login !== expandedItem &&
-            repositories.length === 0 && {
-              borderBottom: theme => `1px solid ${theme.palette.divider}`,
-            }),
-        }}
-      >
-        <Avatar src={user.avatar_url} sx={{ width: 48, height: 48, mr: 3 }} />
-        <Stack>
-          <Typography variant='h6' sx={{ fontWeight: '700' }}>
-            {user.name ?? user.login}
-          </Typography>
-          <Stack direction='row' gap={1}>
-            <Box
-              component='img'
-              src={LinkIcon}
-              sx={{ width: 18, height: 'auto', mt: 0.2 }}
-            />
-            <Typography
-              variant='subtitle1'
-              component='p'
-              sx={{ color: 'text.secondary', fontWeight: '600' }}
-            >
-              {user.html_url}
-            </Typography>
-          </Stack>
-        </Stack>
-      </Stack>
-      {expandedItem === user.login && (
+    <Stack
+      direction='column'
+      component={motion.div}
+      sx={{
+        cursor: 'pointer',
+        overflow: 'hidden',
+      }}
+      variants={motionCardVariants}
+      initial='collapsed'
+      animate={expandedItem === user.login ? 'expanded' : 'collapsed'}
+      onClick={onClickUser}
+      whileTap={{ scale: 0.98 }}
+    >
+      <Fragment>
         <Stack
+          direction='row'
           sx={{
-            maxHeight: 400,
-            overflowY: 'scroll',
-            pl: 2.4,
-            gap: 1.4,
-            pb: 2,
-            borderBottom: theme => `1px solid ${theme.palette.divider}`,
+            cursor: 'pointer',
+            alignItems: 'center',
+            py: 2,
+            ...(!isLastItem &&
+              user.login !== expandedItem &&
+              repositories.length === 0 && {
+                borderBottom: theme => `1px solid ${theme.palette.divider}`,
+              }),
           }}
         >
-          {!repositoryIsLoading && repositories?.length === 0 ? (
-            <Box
-              sx={{
-                minHeight: 100,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+          <Avatar src={user.avatar_url} sx={{ width: 48, height: 48, mr: 3 }} />
+          <Stack>
+            <Typography variant='h6' sx={{ fontWeight: '700' }}>
+              {user.name ?? user.login}
+            </Typography>
+            <Stack direction='row' gap={1}>
+              <Box
+                component='img'
+                src={LinkIcon}
+                sx={{ width: 18, height: 'auto', mt: 0.2 }}
+              />
               <Typography
-                variant='body2'
+                variant='subtitle1'
                 component='p'
+                sx={{ color: 'text.secondary', fontWeight: '600' }}
+              >
+                {user.html_url}
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
+      </Fragment>
+      <AnimatePresence>
+        {expandedItem === user.login && (
+          <motion.div
+            variants={motionContentVariants}
+            initial='collapsed'
+            animate='expanded'
+            exit='collapsed'
+            style={{
+              fontSize: '14px',
+              lineHeight: '1.6',
+              color: '#374151',
+            }}
+          >
+            {expandedItem === user.login && (
+              <Stack
                 sx={{
-                  color: 'text.disabled',
-                  textAlign: 'center',
-                  fontSize: {
-                    xs: 14,
-                    md: 16,
-                  },
+                  maxHeight: 400,
+                  overflowY: 'scroll',
+                  pl: 2.4,
+                  gap: 1.4,
+                  pb: 2,
+                  borderBottom: theme => `1px solid ${theme.palette.divider}`,
                 }}
               >
-                {user.login} doesn't have any repositories or no public ones
-                available.
-              </Typography>
-            </Box>
-          ) : (
-            <Stack sx={{ mt: 1 }}>
-              {repositoryIsLoading && params.page === 1
-                ? Array.from({ length: 5 }).map((_, index) => (
-                    <GithubRepositoryItemSkeleton key={index} />
-                  ))
-                : repositories.map(item => (
-                    <GithubRepositoryItem
-                      key={String(item.id)}
-                      repository={item}
-                    />
-                  ))}
-              {showLoadMoreButton && (
-                <Stack>
-                  <Button
-                    onClick={() =>
-                      fetchRepositories({ ...params, page: params.page + 1 })
-                    }
-                    sx={{ fontWeight: '700' }}
-                    loading={repositoryIsLoading && params.page > 1}
+                {!repositoryIsLoading && repositories?.length === 0 ? (
+                  <Box
+                    sx={{
+                      minHeight: 100,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
                   >
-                    Lorem More...
-                  </Button>
-                </Stack>
-              )}
-            </Stack>
-          )}
-        </Stack>
-      )}
+                    <Typography
+                      variant='body2'
+                      component='p'
+                      sx={{
+                        color: 'text.disabled',
+                        textAlign: 'center',
+                        fontSize: {
+                          xs: 14,
+                          md: 16,
+                        },
+                      }}
+                    >
+                      {user.login} doesn't have any repositories or no public
+                      ones available.
+                    </Typography>
+                  </Box>
+                ) : (
+                  <Stack sx={{ mt: 1 }}>
+                    {repositoryIsLoading && params.page === 1
+                      ? Array.from({ length: 5 }).map((_, index) => (
+                          <GithubRepositoryItemSkeleton key={index} />
+                        ))
+                      : repositories.map(item => (
+                          <GithubRepositoryItem
+                            key={String(item.id)}
+                            repository={item}
+                          />
+                        ))}
+                    {showLoadMoreButton && (
+                      <Stack>
+                        <Button
+                          onClick={e => {
+                            e.stopPropagation()
+                            fetchRepositories({
+                              ...params,
+                              page: params.page + 1,
+                            })
+                          }}
+                          sx={{ fontWeight: '700' }}
+                          loading={repositoryIsLoading && params.page > 1}
+                        >
+                          Lorem More...
+                        </Button>
+                      </Stack>
+                    )}
+                  </Stack>
+                )}
+              </Stack>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Stack>
   )
 }
